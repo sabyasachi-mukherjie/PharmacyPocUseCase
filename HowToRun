@@ -1,0 +1,13 @@
+Following are the steps to run the application after you clone/fork into the repository:
+
+  >>  Run the command mvn clean install -DskipTests for each of the 4 projects to build them.
+  >>  Start the EmployerServer project first. You can either run from target directory within the project folder using the command java -jar <jarname.jar>
+      or you can run the application as Spring Boot App from Eclipse or any other IDE that you're using.
+  >>  Once the EmployeeServer is started, navigate to http://localhost:8761/eureka
+      You should be able to see the homepage of the eureka server with no instances yet registered to it.
+  >>  Next start the EmployeeServiceClient by either of the ways as mentioned above.
+      Once started, you should now be able to see employee-service bound to eureka server at port 2020
+  >>  Next start the CompanyServiceClient by wither of the ways as mentioned above.
+      Once started, you should now be able to see company-service bound to eureka server at port 2021
+      
+Now you can hit the endpoints and start playing with the application.
