@@ -13,6 +13,7 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
@@ -32,6 +33,7 @@ public class CompanyService {
 	}
 
 	/* Gets all the student entities saved so far from H2 database */
+	@SuppressWarnings("deprecation")
 	public Employee[] listEmployee(String columns, String records, String pageNo) {
 		ServiceInstance employeeService = discoveryClient.getInstances("employee-service").get(0);
 		String url = "http://" + employeeService.getHost() + ":" + employeeService.getPort() + "/" + "user/list";
@@ -51,9 +53,11 @@ public class CompanyService {
 			url = url.substring(0, url.length() - 1);
 		}
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+		restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor("admin", "admin"));
 		return restTemplate.getForObject(url, Employee[].class);
 	}
 
+	@SuppressWarnings("deprecation")
 	public List<Employee> save(List<Employee> employees) {
 		List<Employee> employeesAdded = new ArrayList<>();
 		ServiceInstance employeeService = discoveryClient.getInstances("employee-service").get(0);
@@ -63,12 +67,14 @@ public class CompanyService {
 			for (Employee employee : employees) {
 				JSONObject jsonObj = new JSONObject(employee);
 				HttpEntity<String> request = new HttpEntity<>(jsonObj.toString(), httpHeaders);
+				restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor("admin", "admin"));
 				employeesAdded.add(restTemplate.postForObject(url, request, Employee.class));
 			}
 		}
 		return employeesAdded;
 	}
 
+	@SuppressWarnings("deprecation")
 	public List<Employee> update(@Valid List<Employee> employees) {
 		ServiceInstance employeeService = discoveryClient.getInstances("employee-service").get(0);
 		String url = "http://" + employeeService.getHost() + ":" + employeeService.getPort() + "/" + "user/save";
@@ -77,6 +83,7 @@ public class CompanyService {
 			for (Employee employee : employees) {
 				JSONObject jsonObj = new JSONObject(employee);
 				HttpEntity<String> request = new HttpEntity<>(jsonObj.toString(), httpHeaders);
+				restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor("admin", "admin"));
 				restTemplate.put(url, request);
 			}
 		}
